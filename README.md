@@ -1,2 +1,0 @@
-# cerp
-infortechn cloud erp

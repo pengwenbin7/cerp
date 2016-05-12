@@ -1,0 +1,8 @@
+#+TITLE: infortechn cloud erp
+
+* System require
+ubuntu 14.04 x86_64
+
+* Library require
+~glib-2.0
+~json-glib-1.0
