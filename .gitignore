@@ -30,3 +30,10 @@
 
 # Debug files
 *.dSYM/
+
+# os backup
+*~
+.DS_Store
+
+# test dirctore
+test/
