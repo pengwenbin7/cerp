@@ -53,7 +53,6 @@ int main(int argc, char **argv)
   mysql_real_query(mysql, select, strlen(select));
   res = mysql_store_result(mysql);
   int rows = (int) mysql_num_rows(res);
-  printf("rows: %d\n", rows);
 
   // add rows
   json_builder_begin_object(builder);
@@ -70,21 +69,21 @@ int main(int argc, char **argv)
   json_builder_end_array(builder);
   
   json_builder_set_member_name(builder, "rows");
-  json_builder_begin_object(builder);
+  json_builder_begin_array(builder);
   while (row = mysql_fetch_row(res)) {
-    i = 0;
     json_builder_begin_array(builder);
-    for (i; i < field_count; i++) {
+    for (i = 0; i < field_count; i++) {
       json_builder_add_string_value(builder, row[i]);
     }
     json_builder_end_array(builder);
   }
-  json_builder_end_object(builder);
+  json_builder_end_array(builder);
 
   json_builder_end_object(builder);
 
+  // generate json string
   JsonGenerator *gen = json_generator_new();
-  JsonNode * root = json_builder_get_root(builder);
+  JsonNode *root = json_builder_get_root(builder);
   json_generator_set_root(gen, root);
   gchar *str = json_generator_to_data(gen, NULL);
   

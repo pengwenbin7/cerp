@@ -22,8 +22,14 @@ int main(int argc, char *argv[])
 
   json_builder_set_member_name(builder, "size");
   json_builder_begin_array(builder);
+  json_builder_begin_array(builder);
   json_builder_add_int_value(builder, 652);
   json_builder_add_int_value(builder, 242);
+  json_builder_end_array(builder);
+  json_builder_begin_array(builder);
+  json_builder_add_int_value(builder, 134);
+  json_builder_add_int_value(builder, 239);
+  json_builder_end_array(builder);
   json_builder_end_array(builder);
 
   json_builder_end_object(builder);
