@@ -42,13 +42,13 @@ int main(int argc, char **argv)
   	printf("%s\n", mysql_error(mysql));
   }
 
-  /*
   char *create = "CREATE TABLE IF NOT EXISTS odbct (id int, name varchar(20))";
   if (!mysql_real_query(mysql, create, strlen(create))) {
   	printf("%s\n", mysql_error(mysql));
   }
-  */
 
+  char *sql = "set names utf8";
+  mysql_real_query(mysql, sql, strlen(sql));
   char *select = "SELECT * FROM odbct";
   mysql_real_query(mysql, select, strlen(select));
   res = mysql_store_result(mysql);

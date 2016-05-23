@@ -1,4 +1,4 @@
 glib
 json-glib
 mysqlclient(mariadb)
-
+ocilib(4.2.1)
