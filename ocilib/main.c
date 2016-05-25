@@ -7,7 +7,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ocilib.h>
+#include <glib-object.h>
+#include <json-glib/json-glib.h>
+#include <stddef.h>
+#define LEN 2097152
 
+void rs2json(OCI_Resultset *rs, char *json_str);
 int main(int argc, char **argv)
 {
   OCI_Connection *cn;
@@ -21,7 +26,7 @@ int main(int argc, char **argv)
   }
 
   // connect oracle xe
-  const char *db = "192.168.1.101:1521/XE",
+  const char *db = "192.168.188.112:1521/XE",
     *user = "admin",
     *pass = "admin";
   const int mode = OCI_SESSION_DEFAULT;
@@ -31,6 +36,7 @@ int main(int argc, char **argv)
   st = OCI_StatementCreate(cn);
 
   // execute sql statement
+  /*
   OCI_ExecuteStmt(st,
 		  "create table t01 (id int, name varchar(20))"
 		  );
@@ -49,22 +55,67 @@ int main(int argc, char **argv)
   OCI_ExecuteStmt(st,
 		  "delete from t01 where id = 3"
 		  );
+  */
   OCI_ExecuteStmt(st,
-		  "select * from t01"
+		  "select * from t00"
 		  );
 		  
   // get result
   rs = OCI_GetResultset(st);
-  unsigned int row = OCI_GetRowCount(rs),
-    column = OCI_GetColumnCount(rs);
-  printf("resultset size: %u x %u\n", row, column);
-  while (OCI_FetchNext(rs)) {
-    printf("%d\t%s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
-  }
-
+  char json[LEN];
+  rs2json(rs, json);
+  printf("%s", json);
+  
   // commit update
   OCI_Commit(cn);
   // clean up
+  
   OCI_Cleanup();
   return EXIT_SUCCESS;
+}
+
+void rs2json(OCI_Resultset *rs, char *json_str)
+{
+  unsigned int column, row, i;
+  column = OCI_GetColumnCount(rs);
+
+  // json builder initial
+  JsonBuilder *builder = json_builder_new();
+  json_builder_begin_object(builder);
+  json_builder_set_member_name(builder, "column");
+  json_builder_add_int_value(builder, column);
+  json_builder_set_member_name(builder, "columns");
+  json_builder_begin_array(builder);
+  
+  for (i = 1; i <= column; i++) {
+    OCI_Column *col = OCI_GetColumn(rs, i);
+    json_builder_add_string_value(builder, OCI_ColumnGetName(col));
+  }
+  json_builder_end_array(builder);
+  
+  json_builder_set_member_name(builder, "rows");
+  json_builder_begin_array(builder);
+  while (OCI_FetchNext(rs)) {
+    json_builder_begin_array(builder);
+    for (i = 1; i <= column; i++) {
+      json_builder_add_string_value(builder, OCI_GetString(rs, i));
+    }
+    json_builder_end_array(builder);
+  }
+  json_builder_end_array(builder);
+  
+  row = OCI_GetRowCount(rs);
+  json_builder_set_member_name(builder, "row");
+  json_builder_add_int_value(builder, row);
+  json_builder_end_object(builder);
+
+  // generate json string
+  JsonGenerator *gen = json_generator_new();
+  JsonNode *root = json_builder_get_root(builder);
+  json_generator_set_root(gen, root);
+  strcpy(json_str, json_generator_to_data(gen, NULL));
+  json_str[LEN] = '\0';
+  json_node_free(root);
+  g_object_unref(gen);
+  g_object_unref(builder);
 }

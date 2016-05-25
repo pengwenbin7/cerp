@@ -1,8 +1,10 @@
 CC = gcc
-CFLAGS = `mysql_config --cflags` `pkg-config --cflags glib-2.0 json-glib-1.0`
-LIBS = `mysql_config --libs` `pkg-config --libs glib-2.0 json-glib-1.0`
+CFLAGS = `pkg-config --cflags glib-2.0`
+LIBS = `pkg-config --libs glib-2.0`
 
 default: main.c
+	$(CC) main.c $(CFLAGS) $(LIBS) -o main
+compile: main.c
 	$(CC) -c main.c $(CFLAGS)
 
 install: main.o
