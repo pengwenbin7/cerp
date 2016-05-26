@@ -7,3 +7,10 @@ ubuntu 14.04 x86_64
 ~glib-2.0
 
 ~json-glib-1.0
+
+~ocilib-4.2.1
+
+* Database
+oracle 11g xe
+MariaDB, 10.1.11 for Linux (x86_64)
+
