@@ -3,7 +3,8 @@
 #include <stdlib.h>
 
 void say(void);
-void showkv(char *key, char *value, char *data);
+void showkv(void *key, void *value, void *data);
+void hashtable2json(GHashTable *table, char *json);
 int main(int argc, char **argv)
 {
   GHashTable *table = g_hash_table_new(g_str_hash, g_str_equal);
@@ -33,10 +34,11 @@ int main(int argc, char **argv)
   
   // foreach operation
   printf("foreach op:\n");
+  void (*pf) = showkv;
   g_hash_table_foreach(table, showkv, NULL);
       
   /*
-  struct method_table {
+    struct method_table {
     char *name;
     void (*mp)(void);
   } mt;
@@ -54,7 +56,11 @@ void say(void)
   printf("say\n");
 }
 
-void showkv(char *key, char *value, char *data)
+void showkv(void *key, void *value, void *data)
 {
-  printf("%s => %s\n", key, value);
+  printf("%s => %s\n", (char *)key, (char *)value);
 }
+
+void hashtable2json(GHashTable *table, char *json)
+{
+  g_hash_table_foreach(table, kv2json, NULL);
