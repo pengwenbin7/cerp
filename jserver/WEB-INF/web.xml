@@ -14,11 +14,11 @@
 
     <servlet>
         <servlet-name>hello</servlet-name>
-        <servlet-class>Hello</servlet-class>
+        <servlet-class>com.infortechn.Hello</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>api</servlet-name>
-        <servlet-class>Api</servlet-class>
+        <servlet-class>com.infortechn.Api</servlet-class>
     </servlet>
     
     <servlet-mapping>
